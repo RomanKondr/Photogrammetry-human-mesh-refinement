@@ -18,6 +18,7 @@ At its current stage, the strongest results have been achieved on:
 - head smoothing
 - facial landmark preservation
 - full-body segmentation into anatomical regions
+- body-part allocation from segmented clusters
 - anthropometric marker and proportion extraction
 
 The full end-to-end pipeline is still incomplete. In particular:
@@ -31,15 +32,18 @@ The full end-to-end pipeline is still incomplete. In particular:
 The pipeline is organised into several stages:
 
 ### 1. Mesh segmentation
-The input mesh is segmented into up to 13 anatomical regions using saliency-based analysis, Laplacian eigen-decomposition, and clustering. These segments are then assigned to body parts such as the torso, arms, legs, and head using spatial heuristics.
+The input mesh is segmented into anatomical regions using saliency-based analysis, Laplacian eigen-decomposition, and clustering. These segments are then assigned to body parts such as the torso, arms, legs, and head using spatial heuristics.
 
 ### 2. Region-aware smoothing
-Instead of applying one global smoothing operation to the whole body, each body region is processed independently. This helps remove noise while avoiding unnecessary distortion of important anatomical structure.
+Instead of applying one global smoothing operation to the whole body, each body region is processed independently. This helps reduce noise while avoiding unnecessary distortion of important anatomical structure.
 
-### 3. Facial landmark locking
-For the head region, 2D facial landmarks are detected with MediaPipe from a front-facing image. These landmarks are back-projected into 3D and used as anchor points during smoothing so that key facial features such as the eyes, nose, lips, and jawline remain stable.
+### 3. Baseline comparison with general smoothing
+As a baseline, the project also uses general Laplacian smoothing, similar to the kind of automatic smoothing available in tools such as Blender or MeshLab. This generic approach is useful for comparison, but it tends to flatten important anatomical detail.
 
-### 4. Proportion measurement
+### 4. Facial landmark locking
+For the head region, 2D facial landmarks are detected from a front-facing image and used as anchor points during smoothing so that key facial features such as the eyes, nose, lips, and jawline remain more stable.
+
+### 5. Proportion measurement
 After refinement, the system extracts anthropometric body measurements such as shoulder width, chest depth, waist width, hip depth, and limb length using geometric rules based on detected body markers.
 
 ## Results
@@ -47,7 +51,7 @@ After refinement, the system extracts anthropometric body measurements such as s
 The current prototype demonstrates:
 
 - successful smoothing of noisy arm meshes
-- head refinement with facial landmark preservation
+- head refinement with better facial preservation than general smoothing
 - segmentation of full-body meshes into anatomical regions
 - body-part allocation from segmented clusters
 - extraction of body markers, distances, and limb-length ratios
@@ -56,43 +60,43 @@ These results suggest that the pipeline can improve noisy photogrammetry outputs
 
 ## Example Outputs
 
-### Arm smoothing
+### Arm smoothing comparison
 
-| Raw noisy arm mesh | Smoothed arm mesh |
+| Noisy arm mesh | General Laplacian smoothing | Custom smoothing method |
+|---|---|---|
+| ![Noisy arm mesh](images/noisy_hand.png) | ![General Laplacian smoothing on arm](images/general_laplacian_smoothing_arm.png) | ![Custom smoothing method on arm](images/our_custom_smoothing_method_arm.png) |
+
+### Saliency analysis on noisy arm
+
+![Mesh saliency on noisy arm](images/mesh_saliency_on_noisy_arm.png)
+
+### Head smoothing comparison
+
+| General Laplacian smoothing | Custom smoothing method |
 |---|---|
-| ![Raw arm mesh](<images/Screenshot 2026-04-03 213210.png>) | ![Smoothed arm mesh](<images/Screenshot 2026-04-03 213217.png>) |
+| ![General Laplacian smoothing on head](images/general_laplacian_smoothing_head.png) | ![Custom smoothing method on head](images/our_smoothing_method_head.png) |
 
-### Surface saliency / analysis on arm mesh
+### Segmentation examples
 
-![Arm saliency visualisation](<images/Screenshot 2026-04-03 213733.png>)
-
-### Head refinement
-
-| Original head mesh | Smoothed head mesh |
+| Example 1 | Example 2 |
 |---|---|
-| ![Original head mesh](<images/Screenshot 2026-04-03 213237.png>) | ![Smoothed head mesh](<images/Screenshot 2026-04-03 213300.png>) |
-
-### Full-body segmentation examples
-
-| Segmentation example 1 | Segmentation example 2 |
-|---|---|
-| ![Segmentation example 1](<images/Screenshot 2026-04-03 213308.png>) | ![Segmentation example 2](<images/Screenshot 2026-04-03 213334.png>) |
+| ![Segmentation example 1](images/segmentation_ex1.png) | ![Segmentation example 2](images/segmentation_ex2.png) |
 
 ### Additional segmentation example
 
-![Additional segmentation example](<images/Screenshot 2026-04-03 213342.png>)
+![Segmentation example 3](images/segmentation_ex3.png)
 
 ### Body-part allocation output
 
-![Body-part allocation output](<images/Screenshot 2026-04-03 213326.png>)
+![Body parts detection output](images/body_parts_detection.png)
 
-### Marker detection on full body
+### Body measurement markers
 
-![Marker detection on full body](<images/Screenshot 2026-04-03 213347.png>)
+![Body measurement markers](images/body_measurements_marks.png)
 
-### Extracted body measurements
+### Extracted measurements output
 
-![Extracted body measurements](<images/Screenshot 2026-04-03 213138.png>)
+![Measurements output](images/measurements_output.png)
 
 ## Project Structure
 
