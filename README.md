@@ -4,52 +4,95 @@ Automated Python pipeline for refining noisy photogrammetry-derived 3D human mes
 
 ## Overview
 
-Photogrammetry is a low-cost way to reconstruct 3D human models from photographs, but when images are captured without professional scanners, the resulting meshes are often noisy and require manual cleanup in software such as Blender or MeshLab. That process can be slow and usually requires experience. This project explores an automated Python pipeline for cleaning and smoothing noisy photogrammetry-derived 3D human meshes, with the aim of reducing manual post-processing and making refinement more accessible for non-expert users. :contentReference[oaicite:4]{index=4}
+Photogrammetry is a low-cost way to reconstruct 3D human models from photographs, but when images are captured without professional scanners, the resulting meshes are often noisy, incomplete, and anatomically distorted. In many cases, these models require manual cleanup and smoothing in third-party software such as Blender or MeshLab, which can be time-consuming and usually requires prior experience.
 
-So far, the strongest results have been achieved on the head and arms. Torso and leg smoothing still require further testing and dedicated refinement logic, and the full step of merging individually smoothed body parts back into one final refined mesh has not yet been completed. The project was developed incrementally, starting from partial meshes before moving toward full-body processing. :contentReference[oaicite:5]{index=5} :contentReference[oaicite:6]{index=6} :contentReference[oaicite:7]{index=7} 
+This project explores an automated Python pipeline for cleaning and smoothing noisy photogrammetry-derived 3D human meshes, with the aim of reducing manual post-processing and making refinement more accessible for non-expert users.
+
+## Current Status
+
+The project was developed incrementally, starting from partial meshes before moving toward full-body processing.
+
+At its current stage, the strongest results have been achieved on:
+
+- isolated arm smoothing
+- head smoothing
+- facial landmark preservation
+- full-body segmentation into anatomical regions
+- anthropometric marker and proportion extraction
+
+The full end-to-end pipeline is still incomplete. In particular:
+
+- torso and leg smoothing still require further testing
+- body-part-specific smoothing logic still needs refinement
+- merging individually smoothed parts back into one final refined full-body mesh has not yet been completed
 
 ## How It Works
 
 The pipeline is organised into several stages:
 
 ### 1. Mesh segmentation
-The input mesh is segmented into up to 13 anatomical regions using saliency-based analysis, Laplacian eigen-decomposition, and clustering. These segments are then assigned to body parts such as the torso, arms, legs, and head using spatial heuristics. :contentReference[oaicite:2]{index=2}
+The input mesh is segmented into up to 13 anatomical regions using saliency-based analysis, Laplacian eigen-decomposition, and clustering. These segments are then assigned to body parts such as the torso, arms, legs, and head using spatial heuristics.
 
 ### 2. Region-aware smoothing
-Instead of applying one global smoothing operation to the whole body, each body region is processed independently. This helps remove noise while avoiding unnecessary distortion of important anatomical structure. Region-specific Laplacian smoothing is used to preserve body proportions more effectively than generic full-mesh smoothing. :contentReference[oaicite:3]{index=3}
+Instead of applying one global smoothing operation to the whole body, each body region is processed independently. This helps remove noise while avoiding unnecessary distortion of important anatomical structure.
 
 ### 3. Facial landmark locking
-For the head region, 2D facial landmarks are detected with MediaPipe from a front-facing image. These landmarks are back-projected into 3D and used as anchor points during smoothing, so key facial features such as the eyes, nose, lips, and jawline remain stable. :contentReference[oaicite:4]{index=4}
+For the head region, 2D facial landmarks are detected with MediaPipe from a front-facing image. These landmarks are back-projected into 3D and used as anchor points during smoothing so that key facial features such as the eyes, nose, lips, and jawline remain stable.
 
 ### 4. Proportion measurement
-After refinement, the system extracts anthropometric body measurements such as chest width, waist width, hip depth, and related proportions using vertical slicing and bounding-box-based geometric rules. :contentReference[oaicite:5]{index=5}
+After refinement, the system extracts anthropometric body measurements such as shoulder width, chest depth, waist width, hip depth, and limb length using geometric rules based on detected body markers.
 
 ## Results
 
-The developed prototype successfully processed photogrammetry-derived 3D human meshes through segmentation, region-aware smoothing, and anthropometric measurement extraction. 
+The current prototype demonstrates:
 
-Key outcomes include:
+- successful smoothing of noisy arm meshes
+- head refinement with facial landmark preservation
+- segmentation of full-body meshes into anatomical regions
+- body-part allocation from segmented clusters
+- extraction of body markers, distances, and limb-length ratios
 
-- consistent segmentation into anatomical regions across test meshes :contentReference[oaicite:7]{index=7}
-- smoothing that removes photogrammetric surface defects while preserving important structure :contentReference[oaicite:8]{index=8}
-- landmark-guided head smoothing that preserves facial detail better than general smoothing without landmark locking :contentReference[oaicite:9]{index=9}
-- repeatable body measurement outputs aligned with expected spatial structure of the mesh :contentReference[oaicite:10]{index=10}
-
-The results show that the pipeline can improve mesh clarity and usability while remaining transparent, modular, and cost-effective. :contentReference[oaicite:11]{index=11}
+These results suggest that the pipeline can improve noisy photogrammetry outputs while remaining transparent, modular, and accessible. However, full-body smoothing and reconstruction into a single final refined mesh remain future work.
 
 ## Example Outputs
 
-### Segmentation
-![Segmented mesh output](images/segmentation-output.png)
+### Arm smoothing
 
-### Before and after smoothing
-![Before and after refinement](images/before-after-smoothing.png)
+| Raw noisy arm mesh | Smoothed arm mesh |
+|---|---|
+| ![Raw arm mesh](<images/Screenshot 2026-04-03 213210.png>) | ![Smoothed arm mesh](<images/Screenshot 2026-04-03 213217.png>) |
 
-### Head smoothing with landmark preservation
-![Head smoothing comparison](images/head-landmark-locking.png)
+### Surface saliency / analysis on arm mesh
 
-### Body proportion detection
-![Body proportion extraction](images/proportion-detection.png)
+![Arm saliency visualisation](<images/Screenshot 2026-04-03 213733.png>)
+
+### Head refinement
+
+| Original head mesh | Smoothed head mesh |
+|---|---|
+| ![Original head mesh](<images/Screenshot 2026-04-03 213237.png>) | ![Smoothed head mesh](<images/Screenshot 2026-04-03 213300.png>) |
+
+### Full-body segmentation examples
+
+| Segmentation example 1 | Segmentation example 2 |
+|---|---|
+| ![Segmentation example 1](<images/Screenshot 2026-04-03 213308.png>) | ![Segmentation example 2](<images/Screenshot 2026-04-03 213334.png>) |
+
+### Additional segmentation example
+
+![Additional segmentation example](<images/Screenshot 2026-04-03 213342.png>)
+
+### Body-part allocation output
+
+![Body-part allocation output](<images/Screenshot 2026-04-03 213326.png>)
+
+### Marker detection on full body
+
+![Marker detection on full body](<images/Screenshot 2026-04-03 213347.png>)
+
+### Extracted body measurements
+
+![Extracted body measurements](<images/Screenshot 2026-04-03 213138.png>)
 
 ## Project Structure
 
@@ -61,4 +104,5 @@ src/
   segmentation.py
   smoothing_hand.py
   smoothing_model.py
+images/
 requirements.txt
