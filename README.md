@@ -96,7 +96,9 @@ These results suggest that the pipeline can improve noisy photogrammetry outputs
 
 ### Extracted measurements output
 
-![Measurements output](images/measurements_output.png)
+The reported distances and ratios are computed from detected body markers and region-based geometric measurements. The measurement regions are defined relative to total body height, which makes the method adaptable to different mesh scales.
+
+<img src="images/measurements_output.png" alt="Extracted measurements output" width="700">
 
 ## Project Structure
 
