@@ -4,9 +4,9 @@ Automated Python pipeline for refining noisy photogrammetry-derived 3D human mes
 
 ## Overview
 
-Photogrammetry is a low-cost way to reconstruct 3D human models from photographs, but the resulting meshes often contain surface noise, anatomical distortion, and missing detail. This project presents a Python-based post-processing pipeline that improves noisy photogrammetry-generated meshes through segmentation, region-aware smoothing, facial landmark preservation, and anthropometric measurement extraction. :contentReference[oaicite:0]{index=0}
+Photogrammetry is a low-cost way to reconstruct 3D human models from photographs, but when images are captured without professional scanners, the resulting meshes are often noisy and require manual cleanup in software such as Blender or MeshLab. That process can be slow and usually requires experience. This project explores an automated Python pipeline for cleaning and smoothing noisy photogrammetry-derived 3D human meshes, with the aim of reducing manual post-processing and making refinement more accessible for non-expert users. :contentReference[oaicite:4]{index=4}
 
-The goal of the project is to provide an accessible alternative to expensive 3D scanning systems and time-consuming manual cleanup workflows, while still preserving important body structure and facial identity. 
+So far, the strongest results have been achieved on the head and arms. Torso and leg smoothing still require further testing and dedicated refinement logic, and the full step of merging individually smoothed body parts back into one final refined mesh has not yet been completed. The project was developed incrementally, starting from partial meshes before moving toward full-body processing. :contentReference[oaicite:5]{index=5} :contentReference[oaicite:6]{index=6} :contentReference[oaicite:7]{index=7} 
 
 ## How It Works
 
